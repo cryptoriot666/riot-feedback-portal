@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIOT Feedback Portal — Walrus-native Form Tool</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 3rem;">
+      <div style="display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+        <div style="width: 40px; height: 40px; background: #FF1A1A; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: white;">R</div>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; color: white;">RIOT <span style="color: #FF1A1A;">Feedback Portal</span></span>
+      </div>
+      <p style="color: #666; font-size: 0.875rem; max-width: 500px; margin: 0 auto;">
+        Submit feedback, bug reports, and feature requests. Every submission is stored as a verifiable Walrus blob.
+      </p>
+      <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+        <span class="badge badge-red">Walrus Session 2</span>
+        <span class="badge badge-cyan">Built for Sui Overflow</span>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form id="feedbackForm" class="card" style="padding: 2rem;">
+      <div style="display: grid; gap: 1.5rem;">
+
+        <!-- Project -->
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem; font-weight: 600;">Project Name</label>
+          <input type="text" name="project" placeholder="e.g. $RIOT, YourProject" required>
+        </div>
+
+        <!-- Type -->
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem; font-weight: 600;">Feedback Type</label>
+          <select name="type" required>
+            <option value="" disabled selected>Select type...</option>
+            <option value="bug">Bug Report</option>
+            <option value="feature">Feature Request</option>
+            <option value="ux">UX / Design</option>
+            <option value="docs">Documentation</option>
+            <option value="general">General Feedback</option>
+          </select>
+        </div>
+
+        <!-- Priority -->
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem; font-weight: 600;">Priority</label>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" class="btn-secondary priority-btn" data-value="low">Low</button>
+            <button type="button" class="btn-secondary priority-btn btn-active" data-value="medium">Medium</button>
+            <button type="button" class="btn-secondary priority-btn" data-value="high">High</button>
+            <button type="button" class="btn-secondary priority-btn" data-value="critical">Critical</button>
+          </div>
+          <input type="hidden" name="priority" id="priorityInput" value="medium">
+        </div>
+
+        <!-- Message -->
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem; font-weight: 600;">Details</label>
+          <textarea name="message" rows="5" placeholder="Describe the bug, feature idea, or feedback in detail..." required></textarea>
+        </div>
+
+        <!-- Contact -->
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem; font-weight: 600;">Contact (optional)</label>
+          <input type="text" name="contact" placeholder="Twitter handle, Telegram, or email">
+        </div>
+
+        <!-- File -->
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem; font-weight: 600;">Attachment (optional)</label>
+          <input type="file" name="attachment" id="fileInput" style="padding: 0.5rem;">
+          <p style="font-size: 0.75rem; color: #444; margin-top: 0.25rem;">Screenshots, videos, or logs. Max 10MB.</p>
+        </div>
+
+        <!-- Seal Toggle -->
+        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.15); border-radius: 0.75rem;">
+          <input type="checkbox" name="encrypt" id="encryptCheck" style="width: 18px; height: 18px; accent-color: #8B5CF6; cursor: pointer;">
+          <div>
+            <label for="encryptCheck" style="font-size: 0.875rem; font-weight: 500; color: white; cursor: pointer;">Encrypt with Seal</label>
+            <p style="font-size: 0.75rem; color: #666; margin-top: 0.125rem;">Private feedback — only admin can decrypt.</p>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-primary" style="width: 100%; font-size: 1rem; padding: 1rem;">
+          <span id="btnText">Submit to Walrus</span>
+        </button>
+
+        <!-- Status -->
+        <div id="statusArea" style="display: none; text-align: center; padding: 1rem; border-radius: 0.75rem; font-size: 0.875rem;"></div>
+
+        <!-- Result -->
+        <div id="resultArea" style="display: none;">
+          <div style="padding: 1rem; background: rgba(0, 212, 170, 0.05); border: 1px solid rgba(0, 212, 170, 0.2); border-radius: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #00D4AA; box-shadow: 0 0 8px #00D4AA;"></span>
+              <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #00D4AA; font-weight: 600;">Stored on Walrus</span>
+            </div>
+            <p style="font-size: 0.875rem; color: #ccc; margin-bottom: 0.5rem;">Your feedback has been stored as a verifiable blob.</p>
+            <code id="blobIdDisplay" style="display: block; padding: 0.75rem; background: #0A0A0A; border-radius: 0.5rem; font-size: 0.75rem; color: #00D4AA; font-family: monospace; word-break: break-all;"></code>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 3rem; padding-bottom: 2rem;">
+      <p style="font-size: 0.75rem; color: #444;">
+        Built by <a href="https://x.com/suicryptoriot" target="_blank" style="color: #FF1A1A; text-decoration: none;">@suicryptoriot</a> for Walrus Session 2 — Form Tooling
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 0.75rem;">
+        <a href="/admin.html" style="font-size: 0.75rem; color: #666; text-decoration: none;">Admin Dashboard</a>
+        <a href="https://github.com/cryptoriot666/riot-feedback-portal" target="_blank" style="font-size: 0.75rem; color: #666; text-decoration: none;">GitHub</a>
+        <a href="https://theriot.vercel.app" target="_blank" style="font-size: 0.75rem; color: #666; text-decoration: none;">$RIOT</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

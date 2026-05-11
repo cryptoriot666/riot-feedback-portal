@@ -5,6 +5,8 @@ const FORM_CONFIG_KEY = 'riot_form_configs';
 let submissionsData = [];
 let currentFilter = 'all';
 let connectedWallet = null;
+const PACKAGE_ID = '0x5d0664d71898888d25d3cc54e25d15cdc83ee380708d8247003734d62fa3644f';
+const FORM_OBJECT_ID = '0x8f14d5e755338ffe6db15b1e1d95db39d4e5ec4b565e94cc68971c2275c9b5b9';
 
 async function connectWallet() {
   try {
@@ -44,6 +46,33 @@ function disconnectWallet() {
   connectedWallet = null;
   updateWalletUI();
   showToast('Wallet disconnected', 'success');
+}
+
+async function submitOnChain(blobId) {
+    if (!connectedWallet || !window.suiWallet) {
+        console.log('No wallet connected, skipping onchain submit');
+        return null;
+    }
+    
+    try {
+        const tx = {
+            packageObjectId: PACKAGE_ID,
+            module: 'feedback',
+            function: 'submit',
+            typeArguments: [],
+            arguments: [FORM_OBJECT_ID, blobId],
+            gasBudget: 100000000,
+        };
+        
+        const result = await window.suiWallet.executeMoveCall(tx);
+        console.log('✅ Onchain submission:', result);
+        showToast('Submitted onchain!', 'success');
+        return result;
+    } catch (e) {
+        console.error('❌ Onchain failed:', e);
+        showToast('Onchain submit failed, but blob stored', 'error');
+        return null;
+    }
 }
 
 function updateWalletUI() {
@@ -273,6 +302,9 @@ function initForm() {
 
     data.blobId = generateBlobId();
     data.walrusStatus = 'stored';
+
+    // Submit to blockchain
+    await submitOnChain(data.blobId);
 
     const existing = loadFromStorage();
     existing.unshift(data);

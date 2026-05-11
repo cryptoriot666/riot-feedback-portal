@@ -166,7 +166,7 @@ Navigate to `/admin.html` → filter by priority, type, or status → export CSV
 
 ## 🎬 Demo Video
 
-**[▶️ Watch Demo (2:45)](https://youtube.com/your-demo-link)**
+**[▶️ Watch Demo (2:45)]([https://youtube.com/your-demo-link](https://www.youtube.com/watch?v=6P9brT9qjgA))**
 
 Walkthrough:
 1. Create custom form with priority + file upload
